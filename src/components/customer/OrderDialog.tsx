@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle, Loader2, Package, User, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { CartItem } from "@/pages/Index";
 
 interface OrderDialogProps {
@@ -142,10 +143,10 @@ export function OrderDialog({
               <Button onClick={handleClose} className="w-full">
                 Continue Shopping
               </Button>
-              <Button variant="outline" asChild className="w-full">
-                <a href={`/track?email=${encodeURIComponent(customerEmail)}`}>
+              <Button variant="outline" className="w-full" asChild>
+                <Link to={`/track?email=${encodeURIComponent(customerEmail)}`}>
                   Track Your Order
-                </a>
+                </Link>
               </Button>
             </div>
           </div>

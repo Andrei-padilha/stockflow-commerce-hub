@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Search, Package, Truck, CheckCircle, Clock, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 interface Order {
   id: string;
@@ -27,8 +27,11 @@ interface Order {
 }
 
 const OrderTracking = () => {
-  const [searchValue, setSearchValue] = useState("");
-  const [searchType, setSearchType] = useState<"id" | "email">("email");
+  const [searchParams] = useSearchParams();
+  const [searchValue, setSearchValue] = useState(searchParams.get('email') || "");
+  const [searchType, setSearchType] = useState<"id" | "email">(
+    searchParams.get('email') ? "email" : "email"
+  );
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);

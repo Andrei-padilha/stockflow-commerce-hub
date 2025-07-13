@@ -196,16 +196,26 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
+      <section className="relative py-16 px-4 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={heroImage}
+            alt="StockFlow Warehouse"
+            className="w-full h-full object-cover opacity-10"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-transparent"></div>
+        </div>
+        
+        <div className="container mx-auto text-center relative z-10">
+          <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
             Your One-Stop
             <span className="text-primary"> Inventory</span> Solution
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Discover quality products with real-time stock updates and seamless ordering experience
           </p>
-          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4" />
               Live Stock Updates
