@@ -1,4 +1,5 @@
 import { Package, ShoppingCart, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
@@ -15,25 +16,28 @@ interface AdminSidebarProps {
   onSectionChange: (section: "products" | "orders" | "stock") => void;
 }
 
-const menuItems = [
-  {
-    title: "Products",
-    icon: Package,
-    section: "products" as const,
-  },
-  {
-    title: "Orders",
-    icon: ShoppingCart,
-    section: "orders" as const,
-  },
-  {
-    title: "Stock Alerts",
-    icon: AlertTriangle,
-    section: "stock" as const,
-  },
-];
 
 export function AdminSidebar({ activeSection, onSectionChange }: AdminSidebarProps) {
+  const { t } = useTranslation();
+
+  const menuItems = [
+    {
+      title: t('admin.products'),
+      icon: Package,
+      section: "products" as const,
+    },
+    {
+      title: t('admin.orders'),
+      icon: ShoppingCart,
+      section: "orders" as const,
+    },
+    {
+      title: t('admin.stockAlerts'),
+      icon: AlertTriangle,
+      section: "stock" as const,
+    },
+  ];
+
   return (
     <Sidebar className="w-64">
       <SidebarContent>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +33,7 @@ export function OrderDialog({
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,13 +87,13 @@ export function OrderDialog({
       onOrderComplete();
       
       toast({
-        title: "Order placed successfully!",
-        description: `Your order #${order.id.slice(0, 8)} has been placed.`,
+        title: t('order.orderPlacedToast'),
+        description: t('order.orderPlacedDescription', { orderId: order.id.slice(0, 8) }),
       });
 
     } catch (error: any) {
       toast({
-        title: "Error placing order",
+        title: t('order.errorPlacingOrder'),
         description: error.message,
         variant: "destructive"
       });
@@ -118,34 +120,34 @@ export function OrderDialog({
           <div className="text-center py-8">
             <CheckCircle className="h-16 w-16 text-success mx-auto mb-4" />
             <DialogHeader className="mb-6">
-              <DialogTitle className="text-2xl">Order Placed Successfully!</DialogTitle>
+              <DialogTitle className="text-2xl">{t('order.orderPlacedSuccessfully')}</DialogTitle>
               <DialogDescription className="text-lg">
-                Thank you for your order. We'll process it shortly.
+                {t('order.thankYou')}
               </DialogDescription>
             </DialogHeader>
             
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="text-lg">Order Details</CardTitle>
+                <CardTitle className="text-lg">{t('order.orderDetails')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
-                  <p><strong>Order ID:</strong> #{orderId.slice(0, 8)}</p>
-                  <p><strong>Customer:</strong> {customerName}</p>
-                  <p><strong>Email:</strong> {customerEmail}</p>
-                  <p><strong>Total:</strong> ${totalPrice.toFixed(2)}</p>
-                  <p><strong>Status:</strong> Pending</p>
+                  <p><strong>{t('order.orderId')}</strong> #{orderId.slice(0, 8)}</p>
+                  <p><strong>{t('order.customer')}</strong> {customerName}</p>
+                  <p><strong>{t('order.email')}</strong> {customerEmail}</p>
+                  <p><strong>{t('cart.total')}:</strong> ${totalPrice.toFixed(2)}</p>
+                  <p><strong>{t('order.status')}:</strong> {t('order.pending')}</p>
                 </div>
               </CardContent>
             </Card>
             
             <div className="space-y-3">
               <Button onClick={handleClose} className="w-full">
-                Continue Shopping
+                {t('cart.continueShopping')}
               </Button>
               <Button variant="outline" className="w-full" asChild>
                 <Link to={`/track?email=${encodeURIComponent(customerEmail)}`}>
-                  Track Your Order
+                  {t('order.trackYourOrder')}
                 </Link>
               </Button>
             </div>
@@ -154,9 +156,9 @@ export function OrderDialog({
           // Order Form
           <>
             <DialogHeader>
-              <DialogTitle>Complete Your Order</DialogTitle>
+              <DialogTitle>{t('order.completeOrder')}</DialogTitle>
               <DialogDescription>
-                Enter your details to place the order
+                {t('order.enterDetails')}
               </DialogDescription>
             </DialogHeader>
 
@@ -166,7 +168,7 @@ export function OrderDialog({
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Package className="h-5 w-5" />
-                    Order Summary
+                    {t('order.orderSummary')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -201,7 +203,7 @@ export function OrderDialog({
                     <Separator />
                     
                     <div className="flex justify-between items-center text-lg font-bold">
-                      <span>Total ({totalItems} items)</span>
+                      <span>{t('cart.total')} ({t('cart.item', { count: totalItems })})</span>
                       <span>${totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
@@ -213,17 +215,17 @@ export function OrderDialog({
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    Customer Information
+                    {t('order.customerInformation')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
+                      <Label htmlFor="name">{t('order.fullName')}</Label>
                       <Input
                         id="name"
                         type="text"
-                        placeholder="Enter your full name"
+                        placeholder={t('order.enterFullName')}
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         required
@@ -231,17 +233,17 @@ export function OrderDialog({
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
+                      <Label htmlFor="email">{t('order.emailAddress')}</Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="Enter your email address"
+                        placeholder={t('order.enterEmail')}
                         value={customerEmail}
                         onChange={(e) => setCustomerEmail(e.target.value)}
                         required
                       />
                       <p className="text-xs text-muted-foreground">
-                        We'll use this email to send you order updates and tracking information.
+                        {t('order.emailNote')}
                       </p>
                     </div>
                     
@@ -253,7 +255,7 @@ export function OrderDialog({
                         disabled={loading || cart.length === 0}
                       >
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Place Order • ${totalPrice.toFixed(2)}
+                        {t('order.placeOrder')} • ${totalPrice.toFixed(2)}
                       </Button>
                       
                       <Button
@@ -263,7 +265,7 @@ export function OrderDialog({
                         className="w-full"
                         disabled={loading}
                       >
-                        Cancel
+                        {t('order.cancel')}
                       </Button>
                     </div>
                   </form>

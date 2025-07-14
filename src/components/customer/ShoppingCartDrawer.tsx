@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,7 @@ export function ShoppingCartDrawer({
   totalPrice
 }: ShoppingCartDrawerProps) {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const { t } = useTranslation();
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -40,15 +42,15 @@ export function ShoppingCartDrawer({
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
-            Shopping Cart
+            {t('cart.shoppingCart')}
             {totalItems > 0 && (
               <Badge variant="secondary">
-                {totalItems} item{totalItems !== 1 ? 's' : ''}
+                {t('cart.item', { count: totalItems })}
               </Badge>
             )}
           </SheetTitle>
           <SheetDescription>
-            Review your items and proceed to checkout
+            {t('cart.reviewItems')}
           </SheetDescription>
         </SheetHeader>
 
@@ -57,12 +59,12 @@ export function ShoppingCartDrawer({
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Your cart is empty</h3>
+                <h3 className="text-lg font-medium mb-2">{t('cart.cartEmpty')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Add some products to get started
+                  {t('cart.addProductsToStart')}
                 </p>
                 <Button onClick={onClose}>
-                  Continue Shopping
+                  {t('cart.continueShopping')}
                 </Button>
               </div>
             </div>
@@ -88,7 +90,7 @@ export function ShoppingCartDrawer({
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium truncate">{item.product.name}</h4>
                         <p className="text-sm text-muted-foreground">
-                          ${item.product.price.toFixed(2)} each
+                          ${item.product.price.toFixed(2)} {t('cart.each')}
                         </p>
                         
                         {/* Quantity Controls */}
@@ -123,7 +125,7 @@ export function ShoppingCartDrawer({
                             <Plus className="h-3 w-3" />
                           </Button>
                           <span className="text-sm text-muted-foreground ml-2">
-                            of {item.product.stock} available
+                            {t('cart.of')} {item.product.stock} {t('cart.available')}
                           </span>
                         </div>
                       </div>
@@ -150,12 +152,12 @@ export function ShoppingCartDrawer({
               <div className="border-t pt-4 space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Subtotal ({totalItems} items)</span>
+                    <span>{t('cart.subtotal')} ({t('cart.item', { count: totalItems })})</span>
                     <span>${totalPrice.toFixed(2)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
-                    <span>Total</span>
+                    <span>{t('cart.total')}</span>
                     <span>${totalPrice.toFixed(2)}</span>
                   </div>
                 </div>
@@ -165,7 +167,7 @@ export function ShoppingCartDrawer({
                   className="w-full"
                   size="lg"
                 >
-                  Proceed to Checkout
+                  {t('cart.proceedToCheckout')}
                 </Button>
                 
                 <Button
@@ -173,7 +175,7 @@ export function ShoppingCartDrawer({
                   onClick={onClose}
                   className="w-full"
                 >
-                  Continue Shopping
+                  {t('cart.continueShopping')}
                 </Button>
               </div>
             </>

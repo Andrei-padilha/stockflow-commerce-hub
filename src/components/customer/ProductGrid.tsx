@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ interface ProductGridProps {
 
 export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const { t } = useTranslation();
 
   const getQuantity = (productId: string) => quantities[productId] || 1;
 
@@ -30,18 +32,18 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
   };
 
   const getStockStatus = (stock: number) => {
-    if (stock === 0) return { label: "Out of Stock", variant: "destructive" as const };
-    if (stock <= 10) return { label: `${stock} left`, variant: "warning" as const };
-    return { label: "In Stock", variant: "success" as const };
+    if (stock === 0) return { label: t('products.outOfStock'), variant: "destructive" as const };
+    if (stock <= 10) return { label: t('products.leftInStock', { count: stock }), variant: "warning" as const };
+    return { label: t('products.inStock'), variant: "success" as const };
   };
 
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
         <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-xl font-medium mb-2">No products found</h3>
+        <h3 className="text-xl font-medium mb-2">{t('products.noProductsFound')}</h3>
         <p className="text-muted-foreground">
-          Try adjusting your search or check back later for new arrivals.
+          {t('products.noProductsDescription')}
         </p>
       </div>
     );
@@ -97,7 +99,7 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
                   <div className="space-y-3">
                     {/* Quantity Selector */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Quantity:</span>
+                      <span className="text-sm font-medium">{t('products.quantity')}</span>
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
@@ -137,12 +139,12 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
                       className="w-full"
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      Add to Cart • ${(product.price * quantity).toFixed(2)}
+                      {t('products.addToCart')} • ${(product.price * quantity).toFixed(2)}
                     </Button>
                   </div>
                 ) : (
                   <Button disabled className="w-full">
-                    Out of Stock
+                    {t('products.outOfStockButton')}
                   </Button>
                 )}
               </div>
