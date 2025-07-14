@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +36,6 @@ const OrderTracking = () => {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const { toast } = useToast();
-  const { t } = useTranslation();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,10 +68,10 @@ const OrderTracking = () => {
         if (error.code === 'PGRST116') {
           setOrder(null);
           toast({
-            title: t('orderTracking.orderNotFound'),
+            title: "Order not found",
             description: searchType === "id" 
-              ? t('orderTracking.noOrderWithId')
-              : t('orderTracking.noOrdersForEmail'),
+              ? "No order found with this ID" 
+              : "No orders found for this email address",
             variant: "destructive"
           });
         } else {
@@ -84,7 +82,7 @@ const OrderTracking = () => {
       }
     } catch (error: any) {
       toast({
-        title: t('orderTracking.searchFailed'),
+        title: "Search failed",
         description: error.message,
         variant: "destructive"
       });
@@ -131,11 +129,11 @@ const OrderTracking = () => {
           <div className="text-center space-y-2">
             <Link to="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-4">
               <ArrowLeft className="h-4 w-4" />
-              {t('orderTracking.backToStockFlow')}
+              Back to StockFlow
             </Link>
-            <h1 className="text-3xl font-bold text-foreground">{t('orderTracking.trackYourOrder')}</h1>
+            <h1 className="text-3xl font-bold text-foreground">Track Your Order</h1>
             <p className="text-muted-foreground">
-              {t('orderTracking.enterOrderIdOrEmail')}
+              Enter your order ID or email address to check your order status
             </p>
           </div>
 
@@ -144,10 +142,10 @@ const OrderTracking = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Search className="h-5 w-5" />
-                {t('orderTracking.orderLookup')}
+                Order Lookup
               </CardTitle>
               <CardDescription>
-                {t('orderTracking.searchDescription')}
+                Search by order ID for specific orders or email for all your orders
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -159,7 +157,7 @@ const OrderTracking = () => {
                     onClick={() => setSearchType("email")}
                     className="flex-1"
                   >
-                    {t('orderTracking.searchByEmail')}
+                    Search by Email
                   </Button>
                   <Button
                     type="button"
@@ -167,21 +165,21 @@ const OrderTracking = () => {
                     onClick={() => setSearchType("id")}
                     className="flex-1"
                   >
-                    {t('orderTracking.searchByOrderId')}
+                    Search by Order ID
                   </Button>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="search">
-                    {searchType === "email" ? t('orderTracking.emailAddress') : t('orderTracking.orderId')}
+                    {searchType === "email" ? "Email Address" : "Order ID"}
                   </Label>
                   <Input
                     id="search"
                     type={searchType === "email" ? "email" : "text"}
                     placeholder={
                       searchType === "email" 
-                        ? t('orderTracking.enterEmail')
-                        : t('orderTracking.enterOrderId')
+                        ? "Enter your email address" 
+                        : "Enter your order ID"
                     }
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
@@ -190,7 +188,7 @@ const OrderTracking = () => {
                 </div>
                 
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? t('orderTracking.searching') : t('orderTracking.findOrder')}
+                  {loading ? "Searching..." : "Find Order"}
                 </Button>
               </form>
             </CardContent>
@@ -207,23 +205,23 @@ const OrderTracking = () => {
                       <Badge className={getStatusColor(order.status)}>
                         <div className="flex items-center gap-1">
                           {getStatusIcon(order.status)}
-                          {t(`orderTracking.${order.status}`)}
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </div>
                       </Badge>
                     </div>
                     <CardDescription>
-                      {t('orderTracking.placedOn')} {new Date(order.created_at).toLocaleDateString()}
+                      Placed on {new Date(order.created_at).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* Customer Info */}
                     <div>
-                      <h4 className="font-medium mb-2">{t('orderTracking.customerInformation')}</h4>
+                      <h4 className="font-medium mb-2">Customer Information</h4>
                       <p className="text-sm text-muted-foreground">
-                        <strong>{t('orderTracking.name')}</strong> {order.customer_name}
+                        <strong>Name:</strong> {order.customer_name}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        <strong>{t('orderTracking.email')}</strong> {order.customer_email}
+                        <strong>Email:</strong> {order.customer_email}
                       </p>
                     </div>
 
@@ -231,14 +229,14 @@ const OrderTracking = () => {
 
                     {/* Order Items */}
                     <div>
-                      <h4 className="font-medium mb-2">{t('orderTracking.orderItems')}</h4>
+                      <h4 className="font-medium mb-2">Order Items</h4>
                       <div className="space-y-2">
                         {order.order_items.map((item, index) => (
                           <div key={index} className="flex justify-between items-center py-2">
                             <div>
                               <p className="font-medium">{item.products.name}</p>
                               <p className="text-sm text-muted-foreground">
-                                {t('orderTracking.quantity')} {item.quantity}
+                                Quantity: {item.quantity}
                               </p>
                             </div>
                             <p className="font-medium">
@@ -253,13 +251,13 @@ const OrderTracking = () => {
 
                     {/* Total */}
                     <div className="flex justify-between items-center text-lg font-bold">
-                      <span>{t('orderTracking.total')}</span>
+                      <span>Total</span>
                       <span>${order.total?.toFixed(2) || "0.00"}</span>
                     </div>
 
                     {/* Status Timeline */}
                     <div className="mt-6">
-                      <h4 className="font-medium mb-3">{t('orderTracking.orderStatus')}</h4>
+                      <h4 className="font-medium mb-3">Order Status</h4>
                       <div className="space-y-2">
                         {['pending', 'confirmed', 'shipped', 'delivered'].map((status) => {
                           const isActive = order.status === status;
@@ -276,7 +274,7 @@ const OrderTracking = () => {
                             >
                               {getStatusIcon(status)}
                               <span className={`capitalize ${isActive ? 'font-medium' : ''}`}>
-                                {t(`orderTracking.${status}`)}
+                                {status}
                               </span>
                             </div>
                           );
@@ -289,11 +287,11 @@ const OrderTracking = () => {
                 <Card>
                   <CardContent className="text-center py-8">
                     <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">{t('orderTracking.noOrderFound')}</h3>
+                    <h3 className="text-lg font-medium mb-2">No Order Found</h3>
                     <p className="text-muted-foreground">
                       {searchType === "email" 
-                        ? t('orderTracking.noOrdersFoundEmail')
-                        : t('orderTracking.noOrderFoundId')
+                        ? "No orders found for this email address. Please check your email and try again."
+                        : "No order found with this ID. Please check the order ID and try again."
                       }
                     </p>
                   </CardContent>
