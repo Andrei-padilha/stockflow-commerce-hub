@@ -3,14 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ShoppingCart, Package, Search, User, Truck, Shield } from "lucide-react";
+import { ShoppingCart, Package, Search, Truck, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProductGrid } from "@/components/customer/ProductGrid";
 import { ShoppingCartDrawer } from "@/components/customer/ShoppingCartDrawer";
 import { OrderDialog } from "@/components/customer/OrderDialog";
 import heroImage from "@/assets/stockflow-hero.jpg";
+import { useTranslation } from "react-i18next"; // 1. Importar o hook
 
 export interface Product {
   id: string;
@@ -27,6 +27,7 @@ export interface CartItem {
 }
 
 const Index = () => {
+  const { t } = useTranslation(); // 2. Inicializar o hook
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +52,7 @@ const Index = () => {
       setProducts(data || []);
     } catch (error: any) {
       toast({
-        title: "Error loading products",
+        title: t('toast.errorLoadingProducts'), // Traduzido
         description: error.message,
         variant: "destructive"
       });
@@ -68,8 +69,8 @@ const Index = () => {
         const newQuantity = existingItem.quantity + quantity;
         if (newQuantity > product.stock) {
           toast({
-            title: "Insufficient stock",
-            description: `Only ${product.stock} items available`,
+            title: t('toast.insufficientStock'), // Traduzido
+            description: t('toast.onlyAmountAvailable', { stock: product.stock }), // Traduzido com variável
             variant: "destructive"
           });
           return prevCart;
@@ -83,8 +84,8 @@ const Index = () => {
       } else {
         if (quantity > product.stock) {
           toast({
-            title: "Insufficient stock",
-            description: `Only ${product.stock} items available`,
+            title: t('toast.insufficientStock'), // Traduzido
+            description: t('toast.onlyAmountAvailable', { stock: product.stock }), // Traduzido com variável
             variant: "destructive"
           });
           return prevCart;
@@ -95,8 +96,8 @@ const Index = () => {
     });
     
     toast({
-      title: "Added to cart",
-      description: `${quantity} ${product.name} added to cart`,
+      title: t('toast.addedToCart'), // Traduzido
+      description: t('toast.itemAdded', { quantity: quantity, name: product.name }), // Traduzido com variáveis
     });
   };
 
@@ -118,8 +119,8 @@ const Index = () => {
   const removeFromCart = (productId: string) => {
     setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
     toast({
-      title: "Removed from cart",
-      description: "Item removed from cart",
+      title: t('toast.removedFromCart'), // Traduzido
+      description: t('toast.itemRemoved'), // Traduzido
     });
   };
 
@@ -156,11 +157,11 @@ const Index = () => {
             <nav className="hidden md:flex items-center gap-6">
               <Link to="/track" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
                 <Truck className="h-4 w-4" />
-                Track Order
+                {t('trackOrder')}
               </Link>
               <Link to="/auth" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
                 <Shield className="h-4 w-4" />
-                Admin Portal
+                {t('adminPortal')}
               </Link>
             </nav>
 
@@ -171,7 +172,7 @@ const Index = () => {
               className="relative"
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart
+              {t('cart')}
               {getTotalItems() > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-primary text-primary-foreground">
                   {getTotalItems()}
@@ -185,7 +186,7 @@ const Index = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search products..."
+                placeholder={t('searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -209,24 +210,24 @@ const Index = () => {
         
         <div className="container mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-            Your One-Stop
-            <span className="text-primary"> Inventory</span> Solution
+            {t('heroTitle.part1')}
+            <span className="text-primary"> {t('heroTitle.part2')}</span> {t('heroTitle.part3')}
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Discover quality products with real-time stock updates and seamless ordering experience
+            {t('heroSubtitle')}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4" />
-              Live Stock Updates
+              {t('featureLiveStock')}
             </div>
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4" />
-              Easy Ordering
+              {t('featureEasyOrdering')}
             </div>
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4" />
-              Order Tracking
+              {t('featureOrderTracking')}
             </div>
           </div>
         </div>
@@ -237,9 +238,9 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">Our Products</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-2">{t('ourProducts')}</h3>
               <p className="text-muted-foreground">
-                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} available
+                {t('productsAvailable', { count: filteredProducts.length })}
               </p>
             </div>
           </div>
@@ -262,62 +263,3 @@ const Index = () => {
         cart={cart}
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}
-        onUpdateQuantity={updateCartQuantity}
-        onRemove={removeFromCart}
-        onCheckout={() => {
-          setCartOpen(false);
-          setOrderDialogOpen(true);
-        }}
-        totalPrice={getTotalPrice()}
-      />
-
-      {/* Order Dialog */}
-      <OrderDialog
-        cart={cart}
-        isOpen={orderDialogOpen}
-        onClose={() => setOrderDialogOpen(false)}
-        onOrderComplete={clearCart}
-        totalPrice={getTotalPrice()}
-      />
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-border mt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Package className="h-6 w-6 text-primary" />
-                <span className="text-lg font-bold">StockFlow</span>
-              </div>
-              <p className="text-muted-foreground">
-                Your trusted inventory and order automation system.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Quick Links</h4>
-              <div className="space-y-2">
-                <Link to="/track" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Track Your Order
-                </Link>
-                <Link to="/auth" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Admin Portal
-                </Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Customer Service</h4>
-              <p className="text-muted-foreground text-sm">
-                Need help? Use our order tracking system or contact your administrator.
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground text-sm">
-            <p>&copy; 2024 StockFlow. Built with Lovable.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Index;

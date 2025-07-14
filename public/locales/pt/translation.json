@@ -1,0 +1,34 @@
+{
+  "trackOrder": "Rastrear Pedido",
+  "adminPortal": "Portal do Admin",
+  "cart": "Carrinho",
+  "searchPlaceholder": "Buscar produtos...",
+  "heroTitle": {
+    "part1": "Sua Solução Completa de",
+    "part2": "Estoque",
+    "part3": ""
+  },
+  "heroSubtitle": "Descubra produtos de qualidade com estoque em tempo real e uma experiência de compra simples.",
+  "featureLiveStock": "Estoque em Tempo Real",
+  "featureEasyOrdering": "Pedidos Fáceis",
+  "featureOrderTracking": "Rastreio de Pedidos",
+  "ourProducts": "Nossos Produtos",
+  "productsAvailable_one": "{{count}} produto disponível",
+  "productsAvailable_other": "{{count}} produtos disponíveis",
+  "footer": {
+    "tagline": "Seu sistema confiável de automação de estoque e pedidos.",
+    "quickLinks": "Links Rápidos",
+    "customerService": "Atendimento ao Cliente",
+    "serviceHelp": "Precisa de ajuda? Use nosso sistema de rastreio ou contate o administrador.",
+    "copyright": "© 2024 StockFlow. Criado com Lovable."
+  },
+  "toast": {
+    "errorLoadingProducts": "Erro ao carregar produtos",
+    "insufficientStock": "Estoque insuficiente",
+    "onlyAmountAvailable": "Apenas {{stock}} itens disponíveis",
+    "addedToCart": "Adicionado ao carrinho",
+    "itemAdded": "{{quantity}} {{name}} adicionado ao carrinho",
+    "removedFromCart": "Removido do carrinho",
+    "itemRemoved": "Item removido do carrinho"
+  }
+}
