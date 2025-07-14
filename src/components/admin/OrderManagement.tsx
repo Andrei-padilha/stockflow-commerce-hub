@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ShoppingCart, Eye, Package, Truck, CheckCircle, Clock } from "lucide-react";
 
 interface Order {
@@ -78,7 +78,7 @@ export function OrderManagement() {
       
       toast({
         title: "Status do pedido atualizado",
-        description: `Status do pedido alterado para ${newStatus}`,
+        description: `Status do pedido alterado para ${getStatusLabel(newStatus)}`,
       });
       
       fetchOrders();
@@ -105,6 +105,16 @@ export function OrderManagement() {
         return <Clock className="h-4 w-4" />;
     }
   };
+  
+  const getStatusLabel = (status: string) => {
+      switch (status) {
+      case 'pending': return 'Pendente';
+      case 'confirmed': return 'Confirmado';
+      case 'shipped': return 'Enviado';
+      case 'delivered': return 'Entregue';
+      default: return 'Pendente';
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -196,7 +206,7 @@ export function OrderManagement() {
                       <Badge className={getStatusColor(order.status)}>
                         <div className="flex items-center gap-1">
                           {getStatusIcon(order.status)}
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {getStatusLabel(order.status)}
                         </div>
                       </Badge>
                     </TableCell>
@@ -213,8 +223,8 @@ export function OrderManagement() {
                           value={order.status}
                           onValueChange={(value) => updateOrderStatus(order.id, value)}
                         >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
+                          <SelectTrigger className="w-[110px]">
+                            <SelectValue placeholder="Mudar status" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="pending">Pendente</SelectItem>
@@ -247,7 +257,6 @@ export function OrderManagement() {
           
           {selectedOrder && (
             <div className="space-y-4">
-              {/* Customer Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-medium mb-2">Informações do Cliente</h4>
@@ -259,13 +268,12 @@ export function OrderManagement() {
                   <Badge className={getStatusColor(selectedOrder.status)}>
                     <div className="flex items-center gap-1">
                       {getStatusIcon(selectedOrder.status)}
-                      {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
+                      {getStatusLabel(selectedOrder.status)}
                     </div>
                   </Badge>
                 </div>
               </div>
 
-              {/* Order Items */}
               <div>
                 <h4 className="font-medium mb-2">Itens do Pedido</h4>
                 <Table>
@@ -292,7 +300,6 @@ export function OrderManagement() {
                 </Table>
               </div>
 
-              {/* Order Total */}
               <div className="flex justify-between items-center pt-4 border-t">
                 <span className="text-lg font-bold">Total</span>
                 <span className="text-lg font-bold">

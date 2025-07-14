@@ -1,10 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import './i18n'; // Importe o arquivo de configuração que criamos
 import { Suspense } from 'react';
 
-// Envolvemos o App com Suspense para aguardar o carregamento dos arquivos de tradução
+// Esta linha é a mais importante, ela inicializa o i18next
+import './i18n';
+
+// O Suspense é necessário para aguardar o carregamento do JSON de tradução
 createRoot(document.getElementById("root")!).render(
   <Suspense fallback="Carregando...">
     <App />

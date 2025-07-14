@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Package, Plus, Minus, ShoppingCart } from "lucide-react";
 import type { Product } from "@/pages/Index";
+import { useTranslation } from "react-i18next";
 
 interface ProductGridProps {
   products: Product[];
@@ -12,6 +13,7 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
+  const { t } = useTranslation();
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const getQuantity = (productId: string) => quantities[productId] || 1;
@@ -26,22 +28,26 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
   const handleAddToCart = (product: Product) => {
     const quantity = getQuantity(product.id);
     onAddToCart(product, quantity);
-    setQuantity(product.id, 1); // Reset to 1 after adding
+    setQuantity(product.id, 1);
   };
 
   const getStockStatus = (stock: number) => {
-    if (stock === 0) return { label: "Out of Stock", variant: "destructive" as const };
-    if (stock <= 10) return { label: `${stock} left`, variant: "warning" as const };
-    return { label: "In Stock", variant: "success" as const };
+    if (stock === 0) return { label: t('stockStatus.outOfStock'), variant: "destructive" as const };
+    if (stock <= 10) return { label: t('stockStatus.lowStock', { count: stock }), variant: "warning" as const };
+    return { label: t('stockStatus.inStock'), variant: "success" as const };
+  };
+
+  const formatPrice = (price: number) => {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
   };
 
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
         <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-xl font-medium mb-2">No products found</h3>
+        <h3 className="text-xl font-medium mb-2">{t('noProductsFound')}</h3>
         <p className="text-muted-foreground">
-          Try adjusting your search or check back later for new arrivals.
+          {t('tryAdjustingSearch')}
         </p>
       </div>
     );
@@ -52,7 +58,7 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
       {products.map((product) => {
         const stockStatus = getStockStatus(product.stock);
         const quantity = getQuantity(product.id);
-        const maxQuantity = Math.min(product.stock, 10); // Limit to 10 per add to cart
+        const maxQuantity = Math.min(product.stock, 10);
 
         return (
           <Card key={product.id} className="group hover:shadow-lg transition-shadow duration-200">
@@ -82,12 +88,12 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
 
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold text-primary">
-                    ${product.price.toFixed(2)}
+                    {formatPrice(product.price)}
                   </span>
                   <Badge className={
                     stockStatus.variant === 'destructive' ? 'bg-destructive text-destructive-foreground' : 
-                    stockStatus.variant === 'warning' ? 'bg-warning text-warning-foreground' :
-                    'bg-success text-success-foreground'
+                    stockStatus.variant === 'warning' ? 'bg-yellow-500 text-white' :
+                    'bg-green-500 text-white'
                   }>
                     {stockStatus.label}
                   </Badge>
@@ -95,9 +101,8 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
 
                 {product.stock > 0 ? (
                   <div className="space-y-3">
-                    {/* Quantity Selector */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Quantity:</span>
+                      <span className="text-sm font-medium">{t('quantity')}:</span>
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
@@ -130,19 +135,18 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
                         </Button>
                       </div>
                     </div>
-
-                    {/* Add to Cart Button */}
+                    
                     <Button
                       onClick={() => handleAddToCart(product)}
                       className="w-full"
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      Add to Cart • ${(product.price * quantity).toFixed(2)}
+                      {t('addToCart')} • {formatPrice(product.price * quantity)}
                     </Button>
                   </div>
                 ) : (
                   <Button disabled className="w-full">
-                    Out of Stock
+                    {t('stockStatus.outOfStock')}
                   </Button>
                 )}
               </div>

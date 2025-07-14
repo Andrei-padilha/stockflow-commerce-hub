@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Shield } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AuthPage = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,8 +44,8 @@ const AuthPage = () => {
         });
         if (error) throw error;
         toast({
-          title: "Sign up successful!",
-          description: "Please check your email to confirm your account.",
+          title: t('auth.toast.signUpSuccessTitle'),
+          description: t('auth.toast.signUpSuccessDescription'),
         });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -53,13 +55,13 @@ const AuthPage = () => {
         if (error) throw error;
         navigate('/admin');
         toast({
-          title: "Welcome back!",
-          description: "Successfully signed in to StockFlow admin.",
+          title: t('auth.toast.signInSuccessTitle'),
+          description: t('auth.toast.signInSuccessDescription'),
         });
       }
     } catch (error: any) {
       toast({
-        title: "Authentication failed",
+        title: t('auth.toast.authFailedTitle'),
         description: error.message,
         variant: "destructive"
       });
@@ -74,32 +76,32 @@ const AuthPage = () => {
         {/* Header */}
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-4">
-            ← Back to StockFlow
+            {t('auth.backToShop')}
           </Link>
           <div className="flex items-center justify-center gap-2 mb-2">
             <Shield className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold text-foreground">StockFlow</h1>
           </div>
-          <p className="text-muted-foreground">Admin Portal Access</p>
+          <p className="text-muted-foreground">{t('auth.portalAccess')}</p>
         </div>
 
         {/* Auth Card */}
         <Card className="shadow-lg">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
-              {isSignUp ? "Create Admin Account" : "Admin Sign In"}
+              {isSignUp ? t('auth.createAccountTitle') : t('auth.signInTitle')}
             </CardTitle>
             <CardDescription className="text-center">
               {isSignUp 
-                ? "Set up your admin account to manage StockFlow"
-                : "Enter your credentials to access the admin dashboard"
+                ? t('auth.createAccountDescription')
+                : t('auth.signInDescription')
               }
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('auth.emailLabel')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -110,11 +112,11 @@ const AuthPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.passwordLabel')}</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder={t('auth.passwordPlaceholder')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -126,7 +128,7 @@ const AuthPage = () => {
                 disabled={loading}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isSignUp ? "Create Account" : "Sign In"}
+                {isSignUp ? t('auth.createAccountButton') : t('auth.signInButton')}
               </Button>
             </form>
             
@@ -137,8 +139,8 @@ const AuthPage = () => {
                 className="text-sm"
               >
                 {isSignUp 
-                  ? "Already have an account? Sign in" 
-                  : "Need an admin account? Sign up"
+                  ? t('auth.alreadyHaveAccount') 
+                  : t('auth.needAnAccount')
                 }
               </Button>
             </div>
@@ -146,7 +148,7 @@ const AuthPage = () => {
         </Card>
 
         <div className="text-center text-sm text-muted-foreground">
-          <p>Admin access required for inventory management</p>
+          <p>{t('auth.adminAccessRequired')}</p>
         </div>
       </div>
     </div>

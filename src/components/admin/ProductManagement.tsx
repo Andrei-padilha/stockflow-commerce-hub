@@ -38,6 +38,10 @@ export function ProductManagement() {
   useEffect(() => {
     fetchProducts();
   }, []);
+  
+  const formatPrice = (price: number) => {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  };
 
   const fetchProducts = async () => {
     try {
@@ -50,7 +54,7 @@ export function ProductManagement() {
       setProducts(data || []);
     } catch (error: any) {
       toast({
-        title: "Error fetching products",
+        title: "Erro ao buscar produtos",
         description: error.message,
         variant: "destructive"
       });
@@ -66,7 +70,7 @@ export function ProductManagement() {
       const productData = {
         name: formData.name,
         description: formData.description || null,
-        price: parseFloat(formData.price),
+        price: parseFloat(formData.price.replace(',', '.')),
         stock: parseInt(formData.stock),
         image_url: formData.image_url || null
       };
@@ -78,14 +82,14 @@ export function ProductManagement() {
           .eq('id', editingProduct.id);
         
         if (error) throw error;
-        toast({ title: "Product updated successfully" });
+        toast({ title: "Produto atualizado com sucesso" });
       } else {
         const { error } = await supabase
           .from('products')
           .insert([productData]);
         
         if (error) throw error;
-        toast({ title: "Product created successfully" });
+        toast({ title: "Produto criado com sucesso" });
       }
 
       setDialogOpen(false);
@@ -93,7 +97,7 @@ export function ProductManagement() {
       fetchProducts();
     } catch (error: any) {
       toast({
-        title: "Error saving product",
+        title: "Erro ao salvar produto",
         description: error.message,
         variant: "destructive"
       });
@@ -101,7 +105,7 @@ export function ProductManagement() {
   };
 
   const handleDelete = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!confirm('Você tem certeza que deseja deletar este produto?')) return;
     
     try {
       const { error } = await supabase
@@ -110,11 +114,11 @@ export function ProductManagement() {
         .eq('id', productId);
 
       if (error) throw error;
-      toast({ title: "Product deleted successfully" });
+      toast({ title: "Produto deletado com sucesso" });
       fetchProducts();
     } catch (error: any) {
       toast({
-        title: "Error deleting product",
+        title: "Erro ao deletar produto",
         description: error.message,
         variant: "destructive"
       });
@@ -126,7 +130,7 @@ export function ProductManagement() {
     setFormData({
       name: product.name,
       description: product.description || "",
-      price: product.price.toString(),
+      price: product.price.toString().replace('.',','),
       stock: product.stock.toString(),
       image_url: product.image_url || ""
     });
@@ -145,9 +149,9 @@ export function ProductManagement() {
   };
 
   const getStockStatus = (stock: number) => {
-    if (stock === 0) return { label: "Out of Stock", variant: "destructive" as const };
-    if (stock <= 10) return { label: "Low Stock", variant: "warning" as const };
-    return { label: "In Stock", variant: "success" as const };
+    if (stock === 0) return { label: "Sem Estoque", variant: "destructive" as const };
+    if (stock <= 10) return { label: "Estoque Baixo", variant: "warning" as const };
+    return { label: "Em Estoque", variant: "success" as const };
   };
 
   if (loading) {
@@ -162,33 +166,33 @@ export function ProductManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Product Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Gerenciamento de Produtos</h2>
           <p className="text-muted-foreground">
-            Manage your inventory and product information
+            Gerencie seu inventário e as informações dos produtos
           </p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={resetForm}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Product
+              Adicionar Produto
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>
-                {editingProduct ? "Edit Product" : "Add New Product"}
+                {editingProduct ? "Editar Produto" : "Adicionar Novo Produto"}
               </DialogTitle>
               <DialogDescription>
                 {editingProduct 
-                  ? "Update the product information below"
-                  : "Enter the details for the new product"
+                  ? "Atualize as informações do produto abaixo"
+                  : "Insira os detalhes para o novo produto"
                 }
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Product Name</Label>
+                <Label htmlFor="name">Nome do Produto</Label>
                 <Input
                   id="name"
                   value={formData.name}
@@ -197,7 +201,7 @@ export function ProductManagement() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Descrição</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
@@ -207,18 +211,17 @@ export function ProductManagement() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price ($)</Label>
+                  <Label htmlFor="price">Preço (R$)</Label>
                   <Input
                     id="price"
-                    type="number"
-                    step="0.01"
+                    type="text"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="stock">Stock</Label>
+                  <Label htmlFor="stock">Estoque</Label>
                   <Input
                     id="stock"
                     type="number"
@@ -229,17 +232,17 @@ export function ProductManagement() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
+                <Label htmlFor="image_url">URL da Imagem</Label>
                 <Input
                   id="image_url"
                   type="url"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="https://example.com/imagem.jpg"
                 />
               </div>
               <Button type="submit" className="w-full">
-                {editingProduct ? "Update Product" : "Create Product"}
+                {editingProduct ? "Atualizar Produto" : "Criar Produto"}
               </Button>
             </form>
           </DialogContent>
@@ -250,34 +253,34 @@ export function ProductManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Products ({products.length})
+            Produtos ({products.length})
           </CardTitle>
           <CardDescription>
-            Manage your product catalog and inventory levels
+            Gerencie seu catálogo de produtos e níveis de estoque
           </CardDescription>
         </CardHeader>
         <CardContent>
           {products.length === 0 ? (
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No products yet</h3>
+              <h3 className="text-lg font-medium mb-2">Nenhum produto ainda</h3>
               <p className="text-muted-foreground mb-4">
-                Start by adding your first product to the inventory
+                Comece adicionando seu primeiro produto ao inventário
               </p>
               <Button onClick={() => setDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add First Product
+                Adicionar Primeiro Produto
               </Button>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Stock</TableHead>
+                  <TableHead>Produto</TableHead>
+                  <TableHead>Preço</TableHead>
+                  <TableHead>Estoque</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -308,12 +311,14 @@ export function ProductManagement() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>${product.price.toFixed(2)}</TableCell>
+                      <TableCell>{formatPrice(product.price)}</TableCell>
                       <TableCell>{product.stock}</TableCell>
                       <TableCell>
-                        <Badge className={stockStatus.variant === 'destructive' ? 'bg-destructive text-destructive-foreground' : 
-                                         stockStatus.variant === 'warning' ? 'bg-warning text-warning-foreground' :
-                                         'bg-success text-success-foreground'}>
+                        <Badge className={
+                            stockStatus.variant === 'destructive' ? 'bg-destructive text-destructive-foreground' : 
+                            stockStatus.variant === 'warning' ? 'bg-yellow-500 text-white' :
+                            'bg-green-500 text-white'
+                        }>
                           {stockStatus.label}
                         </Badge>
                       </TableCell>

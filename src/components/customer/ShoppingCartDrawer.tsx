@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { ShoppingCart, Trash2, Plus, Minus, Package } from "lucide-react";
 import type { CartItem } from "@/pages/Index";
+import { useTranslation } from "react-i18next";
 
 interface ShoppingCartDrawerProps {
   cart: CartItem[];
@@ -25,6 +26,7 @@ export function ShoppingCartDrawer({
   onCheckout,
   totalPrice
 }: ShoppingCartDrawerProps) {
+  const { t } = useTranslation();
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
@@ -33,6 +35,10 @@ export function ShoppingCartDrawer({
     if (item && newQuantity > item.product.stock) return;
     onUpdateQuantity(productId, newQuantity);
   };
+  
+  const formatPrice = (price: number) => {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -40,15 +46,15 @@ export function ShoppingCartDrawer({
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
-            Shopping Cart
+            {t('shoppingCartTitle')}
             {totalItems > 0 && (
               <Badge variant="secondary">
-                {totalItems} item{totalItems !== 1 ? 's' : ''}
+                {t('itemCount', { count: totalItems })}
               </Badge>
             )}
           </SheetTitle>
           <SheetDescription>
-            Review your items and proceed to checkout
+            {t('shoppingCartDescription')}
           </SheetDescription>
         </SheetHeader>
 
@@ -57,12 +63,12 @@ export function ShoppingCartDrawer({
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Your cart is empty</h3>
+                <h3 className="text-lg font-medium mb-2">{t('cartIsEmpty')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Add some products to get started
+                  {t('addProductsToStart')}
                 </p>
                 <Button onClick={onClose}>
-                  Continue Shopping
+                  {t('continueShopping')}
                 </Button>
               </div>
             </div>
@@ -88,7 +94,7 @@ export function ShoppingCartDrawer({
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium truncate">{item.product.name}</h4>
                         <p className="text-sm text-muted-foreground">
-                          ${item.product.price.toFixed(2)} each
+                          {formatPrice(item.product.price)} {t('each')}
                         </p>
                         
                         {/* Quantity Controls */}
@@ -123,7 +129,7 @@ export function ShoppingCartDrawer({
                             <Plus className="h-3 w-3" />
                           </Button>
                           <span className="text-sm text-muted-foreground ml-2">
-                            of {item.product.stock} available
+                            {t('ofStockAvailable', { stock: item.product.stock })}
                           </span>
                         </div>
                       </div>
@@ -138,7 +144,7 @@ export function ShoppingCartDrawer({
                           <Trash2 className="h-4 w-4" />
                         </Button>
                         <p className="font-medium">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                          {formatPrice(item.product.price * item.quantity)}
                         </p>
                       </div>
                     </div>
@@ -150,13 +156,13 @@ export function ShoppingCartDrawer({
               <div className="border-t pt-4 space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Subtotal ({totalItems} items)</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{t('subtotal', { count: totalItems })}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
-                    <span>Total</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{t('total')}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                 </div>
                 
@@ -165,7 +171,7 @@ export function ShoppingCartDrawer({
                   className="w-full"
                   size="lg"
                 >
-                  Proceed to Checkout
+                  {t('proceedToCheckout')}
                 </Button>
                 
                 <Button
@@ -173,7 +179,7 @@ export function ShoppingCartDrawer({
                   onClick={onClose}
                   className="w-full"
                 >
-                  Continue Shopping
+                  {t('continueShopping')}
                 </Button>
               </div>
             </>

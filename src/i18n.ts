@@ -3,16 +3,23 @@ import { initReactI18next } from "react-i18next";
 import HttpBackend from "i18next-http-backend";
 
 i18n
-  .use(HttpBackend) // Carrega traduções de um backend (nossos arquivos JSON)
-  .use(initReactI18next) // Passa a instância do i18n para o react-i18next
+  .use(HttpBackend)
+  .use(initReactI18next)
   .init({
-    fallbackLng: "pt", // Língua padrão caso a do navegador não seja encontrada
-    debug: true, // Mostra logs no console, útil para desenvolvimento
+    // Define o idioma padrão caso o do navegador não seja encontrado
+    fallbackLng: "pt", 
+
+    // Ativamos o modo de depuração para ver o que está acontecendo no console
+    debug: true, 
+
     interpolation: {
-      escapeValue: false, // React já protege contra XSS
+      escapeValue: false, // React já nos protege contra XSS
     },
+
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json', // Caminho para os arquivos de tradução
+      // Caminho para os arquivos de tradução na pasta 'public'
+      // Esta linha é crucial e deve estar correta.
+      loadPath: '/locales/{{lng}}/{{ns}}.json', 
     },
   });
 
