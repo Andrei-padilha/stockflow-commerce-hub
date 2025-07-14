@@ -10,7 +10,7 @@ import { ProductGrid } from "@/components/customer/ProductGrid";
 import { ShoppingCartDrawer } from "@/components/customer/ShoppingCartDrawer";
 import { OrderDialog } from "@/components/customer/OrderDialog";
 import heroImage from "@/assets/stockflow-hero.jpg";
-import { useTranslation } from "react-i18next"; // 1. Importar o hook
+import { useTranslation } from "react-i18next";
 
 export interface Product {
   id: string;
@@ -27,7 +27,7 @@ export interface CartItem {
 }
 
 const Index = () => {
-  const { t } = useTranslation(); // 2. Inicializar o hook
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ const Index = () => {
       setProducts(data || []);
     } catch (error: any) {
       toast({
-        title: t('toast.errorLoadingProducts'), // Traduzido
+        title: t('toast.errorLoadingProducts'),
         description: error.message,
         variant: "destructive"
       });
@@ -69,8 +69,8 @@ const Index = () => {
         const newQuantity = existingItem.quantity + quantity;
         if (newQuantity > product.stock) {
           toast({
-            title: t('toast.insufficientStock'), // Traduzido
-            description: t('toast.onlyAmountAvailable', { stock: product.stock }), // Traduzido com variável
+            title: t('toast.insufficientStock'),
+            description: t('toast.onlyAmountAvailable', { stock: product.stock }),
             variant: "destructive"
           });
           return prevCart;
@@ -84,8 +84,8 @@ const Index = () => {
       } else {
         if (quantity > product.stock) {
           toast({
-            title: t('toast.insufficientStock'), // Traduzido
-            description: t('toast.onlyAmountAvailable', { stock: product.stock }), // Traduzido com variável
+            title: t('toast.insufficientStock'),
+            description: t('toast.onlyAmountAvailable', { stock: product.stock }),
             variant: "destructive"
           });
           return prevCart;
@@ -96,8 +96,8 @@ const Index = () => {
     });
     
     toast({
-      title: t('toast.addedToCart'), // Traduzido
-      description: t('toast.itemAdded', { quantity: quantity, name: product.name }), // Traduzido com variáveis
+      title: t('toast.addedToCart'),
+      description: t('toast.itemAdded', { quantity: quantity, name: product.name }),
     });
   };
 
@@ -119,8 +119,8 @@ const Index = () => {
   const removeFromCart = (productId: string) => {
     setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
     toast({
-      title: t('toast.removedFromCart'), // Traduzido
-      description: t('toast.itemRemoved'), // Traduzido
+      title: t('toast.removedFromCart'),
+      description: t('toast.itemRemoved'),
     });
   };
 
@@ -263,3 +263,62 @@ const Index = () => {
         cart={cart}
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}
+        onUpdateQuantity={updateCartQuantity}
+        onRemove={removeFromCart}
+        onCheckout={() => {
+          setCartOpen(false);
+          setOrderDialogOpen(true);
+        }}
+        totalPrice={getTotalPrice()}
+      />
+
+      {/* Order Dialog */}
+      <OrderDialog
+        cart={cart}
+        isOpen={orderDialogOpen}
+        onClose={() => setOrderDialogOpen(false)}
+        onOrderComplete={clearCart}
+        totalPrice={getTotalPrice()}
+      />
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-border mt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Package className="h-6 w-6 text-primary" />
+                <span className="text-lg font-bold">StockFlow</span>
+              </div>
+              <p className="text-muted-foreground">
+                {t('footer.tagline')}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium mb-4">{t('footer.quickLinks')}</h4>
+              <div className="space-y-2">
+                <Link to="/track" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {t('trackOrder')}
+                </Link>
+                <Link to="/auth" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {t('adminPortal')}
+                </Link>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-medium mb-4">{t('footer.customerService')}</h4>
+              <p className="text-muted-foreground text-sm">
+                {t('footer.serviceHelp')}
+              </p>
+            </div>
+          </div>
+          <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground text-sm">
+            <p>{t('footer.copyright')}</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Index;
