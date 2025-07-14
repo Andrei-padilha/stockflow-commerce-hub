@@ -17,17 +17,17 @@ interface AdminSidebarProps {
 
 const menuItems = [
   {
-    title: "Products",
+    title: "Produtos",
     icon: Package,
     section: "products" as const,
   },
   {
-    title: "Orders",
+    title: "Pedidos",
     icon: ShoppingCart,
     section: "orders" as const,
   },
   {
-    title: "Stock Alerts",
+    title: "Alertas de Estoque",
     icon: AlertTriangle,
     section: "stock" as const,
   },

@@ -35,6 +35,10 @@ export function OrderManagement() {
   useEffect(() => {
     fetchOrders();
   }, []);
+  
+  const formatPrice = (price: number) => {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  };
 
   const fetchOrders = async () => {
     try {
@@ -54,7 +58,7 @@ export function OrderManagement() {
       setOrders(data || []);
     } catch (error: any) {
       toast({
-        title: "Error fetching orders",
+        title: "Erro ao buscar pedidos",
         description: error.message,
         variant: "destructive"
       });
@@ -73,14 +77,14 @@ export function OrderManagement() {
       if (error) throw error;
       
       toast({
-        title: "Order status updated",
-        description: `Order status changed to ${newStatus}`,
+        title: "Status do pedido atualizado",
+        description: `Status do pedido alterado para ${newStatus}`,
       });
       
       fetchOrders();
     } catch (error: any) {
       toast({
-        title: "Error updating order",
+        title: "Erro ao atualizar pedido",
         description: error.message,
         variant: "destructive"
       });
@@ -105,15 +109,15 @@ export function OrderManagement() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-warning text-warning-foreground';
+        return 'bg-yellow-500 text-white';
       case 'confirmed':
-        return 'bg-primary text-primary-foreground';
+        return 'bg-blue-500 text-white';
       case 'shipped':
-        return 'bg-accent text-accent-foreground';
+        return 'bg-purple-500 text-white';
       case 'delivered':
-        return 'bg-success text-success-foreground';
+        return 'bg-green-500 text-white';
       default:
-        return 'bg-muted text-muted-foreground';
+        return 'bg-gray-500 text-white';
     }
   };
 
@@ -133,9 +137,9 @@ export function OrderManagement() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Order Management</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Gerenciamento de Pedidos</h2>
         <p className="text-muted-foreground">
-          View and manage customer orders
+          Visualize e gerencie os pedidos dos clientes
         </p>
       </div>
 
@@ -143,31 +147,31 @@ export function OrderManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
-            Orders ({orders.length})
+            Pedidos ({orders.length})
           </CardTitle>
           <CardDescription>
-            Manage order status and view order details
+            Gerencie o status e veja os detalhes dos pedidos
           </CardDescription>
         </CardHeader>
         <CardContent>
           {orders.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No orders yet</h3>
+              <h3 className="text-lg font-medium mb-2">Nenhum pedido ainda</h3>
               <p className="text-muted-foreground">
-                Orders will appear here when customers place them
+                Os pedidos aparecerão aqui quando os clientes os fizerem
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>ID do Pedido</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Data</TableHead>
                   <TableHead>Total</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -185,9 +189,9 @@ export function OrderManagement() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {new Date(order.created_at).toLocaleDateString()}
+                      {new Date(order.created_at).toLocaleDateString('pt-BR')}
                     </TableCell>
-                    <TableCell>${order.total?.toFixed(2) || "0.00"}</TableCell>
+                    <TableCell>{formatPrice(order.total || 0)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(order.status)}>
                         <div className="flex items-center gap-1">
@@ -213,10 +217,10 @@ export function OrderManagement() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
-                            <SelectItem value="shipped">Shipped</SelectItem>
-                            <SelectItem value="delivered">Delivered</SelectItem>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                            <SelectItem value="confirmed">Confirmado</SelectItem>
+                            <SelectItem value="shipped">Enviado</SelectItem>
+                            <SelectItem value="delivered">Entregue</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -234,10 +238,10 @@ export function OrderManagement() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              Order Details #{selectedOrder?.id.slice(0, 8)}
+              Detalhes do Pedido #{selectedOrder?.id.slice(0, 8)}
             </DialogTitle>
             <DialogDescription>
-              Order placed on {selectedOrder && new Date(selectedOrder.created_at).toLocaleDateString()}
+              Pedido feito em {selectedOrder && new Date(selectedOrder.created_at).toLocaleDateString('pt-BR')}
             </DialogDescription>
           </DialogHeader>
           
@@ -246,12 +250,12 @@ export function OrderManagement() {
               {/* Customer Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium mb-2">Customer Information</h4>
-                  <p className="text-sm"><strong>Name:</strong> {selectedOrder.customer_name}</p>
+                  <h4 className="font-medium mb-2">Informações do Cliente</h4>
+                  <p className="text-sm"><strong>Nome:</strong> {selectedOrder.customer_name}</p>
                   <p className="text-sm"><strong>Email:</strong> {selectedOrder.customer_email}</p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">Order Status</h4>
+                  <h4 className="font-medium mb-2">Status do Pedido</h4>
                   <Badge className={getStatusColor(selectedOrder.status)}>
                     <div className="flex items-center gap-1">
                       {getStatusIcon(selectedOrder.status)}
@@ -263,13 +267,13 @@ export function OrderManagement() {
 
               {/* Order Items */}
               <div>
-                <h4 className="font-medium mb-2">Order Items</h4>
+                <h4 className="font-medium mb-2">Itens do Pedido</h4>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Unit Price</TableHead>
+                      <TableHead>Produto</TableHead>
+                      <TableHead>Quantidade</TableHead>
+                      <TableHead>Preço Unitário</TableHead>
                       <TableHead className="text-right">Total</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -278,9 +282,9 @@ export function OrderManagement() {
                       <TableRow key={index}>
                         <TableCell>{item.products.name}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
-                        <TableCell>${item.unit_price.toFixed(2)}</TableCell>
+                        <TableCell>{formatPrice(item.unit_price)}</TableCell>
                         <TableCell className="text-right">
-                          ${(item.quantity * item.unit_price).toFixed(2)}
+                          {formatPrice(item.quantity * item.unit_price)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -292,7 +296,7 @@ export function OrderManagement() {
               <div className="flex justify-between items-center pt-4 border-t">
                 <span className="text-lg font-bold">Total</span>
                 <span className="text-lg font-bold">
-                  ${selectedOrder.total?.toFixed(2) || "0.00"}
+                  {formatPrice(selectedOrder.total || 0)}
                 </span>
               </div>
             </div>

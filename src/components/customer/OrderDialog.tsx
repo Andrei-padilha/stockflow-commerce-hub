@@ -32,6 +32,10 @@ export function OrderDialog({
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
   const { toast } = useToast();
+  
+  const formatPrice = (price: number) => {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +44,6 @@ export function OrderDialog({
     setLoading(true);
     
     try {
-      // Create the order
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -54,7 +57,6 @@ export function OrderDialog({
 
       if (orderError) throw orderError;
 
-      // Create order items
       const orderItems = cart.map(item => ({
         order_id: order.id,
         product_id: item.product.id,
@@ -68,7 +70,6 @@ export function OrderDialog({
 
       if (itemsError) throw itemsError;
 
-      // Update product stock
       for (const item of cart) {
         const { error: stockError } = await supabase
           .from('products')
@@ -85,13 +86,13 @@ export function OrderDialog({
       onOrderComplete();
       
       toast({
-        title: "Order placed successfully!",
-        description: `Your order #${order.id.slice(0, 8)} has been placed.`,
+        title: "Pedido realizado com sucesso!",
+        description: `Seu pedido #${order.id.slice(0, 8)} foi registrado.`,
       });
 
     } catch (error: any) {
       toast({
-        title: "Error placing order",
+        title: "Erro ao realizar o pedido",
         description: error.message,
         variant: "destructive"
       });
@@ -116,36 +117,36 @@ export function OrderDialog({
         {orderSuccess ? (
           // Success Screen
           <div className="text-center py-8">
-            <CheckCircle className="h-16 w-16 text-success mx-auto mb-4" />
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <DialogHeader className="mb-6">
-              <DialogTitle className="text-2xl">Order Placed Successfully!</DialogTitle>
+              <DialogTitle className="text-2xl">Pedido Realizado com Sucesso!</DialogTitle>
               <DialogDescription className="text-lg">
-                Thank you for your order. We'll process it shortly.
+                Obrigado pelo seu pedido. Ele será processado em breve.
               </DialogDescription>
             </DialogHeader>
             
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="text-lg">Order Details</CardTitle>
+                <CardTitle className="text-lg">Detalhes do Pedido</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
-                  <p><strong>Order ID:</strong> #{orderId.slice(0, 8)}</p>
-                  <p><strong>Customer:</strong> {customerName}</p>
+                  <p><strong>ID do Pedido:</strong> #{orderId.slice(0, 8)}</p>
+                  <p><strong>Cliente:</strong> {customerName}</p>
                   <p><strong>Email:</strong> {customerEmail}</p>
-                  <p><strong>Total:</strong> ${totalPrice.toFixed(2)}</p>
-                  <p><strong>Status:</strong> Pending</p>
+                  <p><strong>Total:</strong> {formatPrice(totalPrice)}</p>
+                  <p><strong>Status:</strong> Pendente</p>
                 </div>
               </CardContent>
             </Card>
             
             <div className="space-y-3">
               <Button onClick={handleClose} className="w-full">
-                Continue Shopping
+                Continuar Comprando
               </Button>
               <Button variant="outline" className="w-full" asChild>
                 <Link to={`/track?email=${encodeURIComponent(customerEmail)}`}>
-                  Track Your Order
+                  Rastrear Pedido
                 </Link>
               </Button>
             </div>
@@ -154,9 +155,9 @@ export function OrderDialog({
           // Order Form
           <>
             <DialogHeader>
-              <DialogTitle>Complete Your Order</DialogTitle>
+              <DialogTitle>Complete Seu Pedido</DialogTitle>
               <DialogDescription>
-                Enter your details to place the order
+                Insira seus dados para finalizar o pedido
               </DialogDescription>
             </DialogHeader>
 
@@ -166,7 +167,7 @@ export function OrderDialog({
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Package className="h-5 w-5" />
-                    Order Summary
+                    Resumo do Pedido
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -188,12 +189,12 @@ export function OrderDialog({
                           <div>
                             <p className="font-medium">{item.product.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              ${item.product.price.toFixed(2)} × {item.quantity}
+                              {formatPrice(item.product.price)} × {item.quantity}
                             </p>
                           </div>
                         </div>
                         <p className="font-medium">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                          {formatPrice(item.product.price * item.quantity)}
                         </p>
                       </div>
                     ))}
@@ -201,8 +202,8 @@ export function OrderDialog({
                     <Separator />
                     
                     <div className="flex justify-between items-center text-lg font-bold">
-                      <span>Total ({totalItems} items)</span>
-                      <span>${totalPrice.toFixed(2)}</span>
+                      <span>Total ({totalItems} itens)</span>
+                      <span>{formatPrice(totalPrice)}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -213,17 +214,17 @@ export function OrderDialog({
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    Customer Information
+                    Informações do Cliente
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
+                      <Label htmlFor="name">Nome Completo</Label>
                       <Input
                         id="name"
                         type="text"
-                        placeholder="Enter your full name"
+                        placeholder="Insira seu nome completo"
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         required
@@ -231,17 +232,17 @@ export function OrderDialog({
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
+                      <Label htmlFor="email">Endereço de E-mail</Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="Enter your email address"
+                        placeholder="Insira seu endereço de e-mail"
                         value={customerEmail}
                         onChange={(e) => setCustomerEmail(e.target.value)}
                         required
                       />
                       <p className="text-xs text-muted-foreground">
-                        We'll use this email to send you order updates and tracking information.
+                        Usaremos este e-mail para enviar atualizações do seu pedido.
                       </p>
                     </div>
                     
@@ -253,7 +254,7 @@ export function OrderDialog({
                         disabled={loading || cart.length === 0}
                       >
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Place Order • ${totalPrice.toFixed(2)}
+                        Finalizar Pedido • {formatPrice(totalPrice)}
                       </Button>
                       
                       <Button
@@ -263,7 +264,7 @@ export function OrderDialog({
                         className="w-full"
                         disabled={loading}
                       >
-                        Cancel
+                        Cancelar
                       </Button>
                     </div>
                   </form>

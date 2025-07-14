@@ -30,5 +30,49 @@
     "itemAdded": "{{quantity}} {{name}} adicionado ao carrinho",
     "removedFromCart": "Removido do carrinho",
     "itemRemoved": "Item removido do carrinho"
+  },
+  "noProductsFound": "Nenhum produto encontrado",
+  "tryAdjustingSearch": "Tente ajustar sua busca ou volte mais tarde.",
+  "quantity": "Quantidade",
+  "addToCart": "Adicionar ao Carrinho",
+  "stockStatus": {
+    "outOfStock": "Sem Estoque",
+    "inStock": "Em Estoque",
+    "lowStock": "Restam {{count}}"
+  },
+  "shoppingCartTitle": "Carrinho de Compras",
+  "shoppingCartDescription": "Revise seus itens e finalize a compra",
+  "itemCount_one": "{{count}} item",
+  "itemCount_other": "{{count}} itens",
+  "cartIsEmpty": "Seu carrinho está vazio",
+  "addProductsToStart": "Adicione alguns produtos para começar",
+  "continueShopping": "Continuar Comprando",
+  "each": "cada",
+  "ofStockAvailable": "de {{stock}} disponíveis",
+  "subtotal": "Subtotal ({{count}} itens)",
+  "total": "Total",
+  "proceedToCheckout": "Finalizar Compra",
+  "auth": {
+    "backToShop": "← Voltar para StockFlow",
+    "portalAccess": "Acesso ao Portal do Admin",
+    "signInTitle": "Login do Admin",
+    "signInDescription": "Insira suas credenciais para acessar o painel",
+    "createAccountTitle": "Criar Conta de Admin",
+    "createAccountDescription": "Crie sua conta para gerenciar o StockFlow",
+    "emailLabel": "E-mail",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Insira sua senha",
+    "signInButton": "Entrar",
+    "createAccountButton": "Criar Conta",
+    "alreadyHaveAccount": "Já tem uma conta? Entrar",
+    "needAnAccount": "Precisa de uma conta? Cadastre-se",
+    "adminAccessRequired": "Acesso de administrador necessário para o gerenciamento",
+    "toast": {
+      "signUpSuccessTitle": "Cadastro realizado!",
+      "signUpSuccessDescription": "Por favor, verifique seu e-mail para confirmar a conta.",
+      "signInSuccessTitle": "Bem-vindo(a) de volta!",
+      "signInSuccessDescription": "Login no painel StockFlow realizado com sucesso.",
+      "authFailedTitle": "Falha na autenticação"
+    }
   }
 }
